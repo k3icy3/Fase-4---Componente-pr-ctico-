@@ -26,3 +26,16 @@ def obtener_logger(nombre_modulo: str) -> logging.Logger:
 from abc import ABC,abstractmethod
 from datetime import datetime
 import uidd
+class entidades(ABC):
+    def_init_(self):
+    self.id = str(uuid.uuid4())
+    self.fecha_creacion = datetime.now()
+    self.fecha_actualizacion = None
+    self.activo = True
+def marcar_actualizada(self):
+    self.fecha_actualizacion = datetime.now()
+@abstractmethod
+def es_validar(self)->bool:
+    pass
+
+
