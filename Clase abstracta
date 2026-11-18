@@ -1,0 +1,17 @@
+from abc import ABC, abstractmethod
+from datetime import datetime
+import uuid
+
+class EntidadBase(ABC):
+    def __init__(self):
+        self.id = str(uuid.uuid4())
+        self.fecha_creacion = datetime.now()
+        self.fecha_actualizacion = None
+        self.activo = True
+
+    def marcar_actualizada(self):
+        self.fecha_actualizacion = datetime.now()
+
+    @abstractmethod
+    def es_valida(self) -> bool:
+        pass
