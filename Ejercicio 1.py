@@ -1,0 +1,24 @@
+class ErrorBaseSistema(Exception):
+    """Excepción donde se heredan todos los errores del sistema."""
+    def __init__(self, mensaje: str, codigo_error: int = 500):
+        self.mensaje = mensaje
+        self.codigo_error = codigo_error
+        super().__init__(self.mensaje)
+
+class EntidadNoEncontradaError(ErrorBaseSistema):
+    """Se ejecuta cuando no se halla ningun registro o entidad."""
+    def __init__(self, entidad: str, id_entidad: str | int):
+        mensaje = f"No se hallo la entidad '{entidad}' con el ID: {id_entidad}."
+        super().__init__(mensaje, codigo_error=404)
+
+class ValidacionEntidadError(ErrorBaseSistema):
+    """Se ejecuta cuando los datos de una entidad no cumplen las reglas de negocio."""
+    def __init__(self, mensaje: str):
+        super().__init__(mensaje, codigo_error=400)
+import logging
+import os
+from logging.handlers import RotatingFileHandler
+
+def obtener_logger(nombre_modulo: str) -> logging.Logger:
+    """Configura y devuelve un logger listo para usar en cualquier módulo."""
+  
