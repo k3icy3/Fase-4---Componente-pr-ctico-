@@ -23,3 +23,6 @@ from logging.handlers import RotatingFileHandler
 def obtener_logger(nombre_modulo: str) -> logging.Logger:
     """Configura los logger listo para validar cualquier registro."""
   
+from abc import ABC,abstractmethod
+from datetime import datetime
+import uidd
