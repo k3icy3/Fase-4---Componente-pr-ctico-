@@ -15,10 +15,11 @@ class ValidacionEntidadError(ErrorBaseSistema):
     """Se ejecuta cuando los datos de una entidad no cumplen las reglas de negocio."""
     def __init__(self, mensaje: str):
         super().__init__(mensaje, codigo_error=400)
+        
 import logging
 import os
 from logging.handlers import RotatingFileHandler
 
 def obtener_logger(nombre_modulo: str) -> logging.Logger:
-    """Configura y devuelve un logger listo para usar en cualquier módulo."""
+    """Configura los logger listo para validar cualquier registro."""
   
