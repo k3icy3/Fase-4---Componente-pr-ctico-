@@ -38,4 +38,24 @@ def marcar_actualizada(self):
 def es_validar(self)->bool:
     pass
 
+import re
+from abc import ABC, abstractmethod
+class entidades(ABC):
+    def_init_(self, identidades: str):
+    self._id = id_entidades
+
+@abstractmethod 
+def obtener_informacion(self): -> str:
+    pass
+class cliente(entidades):
+    def_init_(self, id_entidades:str,nombre:str,apellido:str,telefono:str,gmail:str)
+    super()._init_(id_entidades)
+    #se ejecuta para modificar la clase con
+@setter
+self.nombre = nombre
+self.
+
+
+
+
 
