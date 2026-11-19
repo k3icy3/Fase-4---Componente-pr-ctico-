@@ -53,7 +53,69 @@ class cliente(entidades):
     #se ejecuta para modificar la clase con
 @setter
 self.nombre = nombre
-self.
+self.apellido = apellido
+self.telefono = telefono
+self.direccion = direccion
+
+#Validacion del nombre mediante encapsulación 
+@property
+def nombre(self)->str:
+    return self._nombre
+    
+@nombre.setter
+def nombre(self,valor:str):
+    if not isintance(valor,str) or len(valor.strip())<6:
+        raise ValueError("el nombre debe tener 6 caracteres.")
+        self._nombre=valor.strip()
+#Validacion del apellido mediante la encapsulación 
+@property
+def apellido(self)->str:
+    return self._apellido
+
+@apellido.setter
+def apellido(self,valor:str):
+    if not isintance(valor,str) or len(valor.strip())<5:
+        raise ValueError("el apellido debe tener 5 caracteres.")
+        self._apellido=valor.strip()
+        
+#Validacion del telefono mediante la encapsulación 
+@property
+def telefono(self)->str:
+    return self._nombre
+    
+@telefono.setter
+def telefono(self,valor:str):
+    if not isintance(valor,str) or not valor.strip().isdigit()ornot
+        raise ValueError("el nombre debe tener 6 caracteres.")
+        self._nombre=valor.strip()
+
+    
+#Validacion del gmail mediante la encapsulación 
+    @property
+    def email(self) -> str:
+        return self.__email
+
+    @email.setter
+    def email(self, valor: str):
+        patron = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+        if not isinstance(valor, str) or not re.match(patron, valor):
+            raise ValueError("El correo electrónico es inválido.")
+        self.__email = valor.strip().lower()
+
+#Ejecucion del método abstracto
+    def obtener_informacion(self) -> str:
+        return f"Cliente: {self.__nombre} {self._apellido} | Correo: {self.__email} | Telefono: {self._telefono}"
+        return all([
+            boll.(self._id_entidades),
+            boll.(self.nombre),
+            boll.(self.apellido),
+            boll.(self.telefono),
+            boll.(self.gmail),
+])
+        
+
+
+                         
 
 
 
