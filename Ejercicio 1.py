@@ -175,21 +175,9 @@ class servicio(ABC):
     ) -> float:
 
 
+#Creacion de la clase reserva
+Class reserva(Entidades):
+    def __init__(self, cliente, servicio, duracion):
+        super().__init__()
 
-
-
-
-
-    
-        
-
-
-        
-
-
-                         
-
-
-
-
-
+         
