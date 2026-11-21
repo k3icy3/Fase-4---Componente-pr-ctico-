@@ -285,13 +285,13 @@ def __init__( self, id_servicio: int | str, nombre: str, precio: float cantidad_
         logger.info(f"Servicio AlquilerEquipo '{self.nombre}' ha sido ejecutado correctamente.")
 
     def validar_parametros(self, duracion_horas: int) -> None:
-         if duracion_horas < 4:
-            raise ValidacionEntidadError("El alquiler de equipos requiere un mínimo de 4 horas.")
+         if duracion_horas < 2:
+            raise ValidacionEntidadError("El alquiler de equipos requiere un mínimo de 2 horas.")
 
     def calcular_costo_total(self, duracion_horas: int = 1) -> float:
         self.validar_parsmetros(duracion_horas)
         seguro_equipo = 10000.0
-        return round((self.precio * duracion_horas * self.cantidad_equipos) + seguro_equipo, 4)
+        return round((self.precio * duracion_horas * self.cantidad_equipos) + seguro_equipo, 2)
 
     def obtener_informacion(self) -> str:
         """Metodo de poliformismo."""
