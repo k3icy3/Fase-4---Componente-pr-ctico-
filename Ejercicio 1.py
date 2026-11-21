@@ -5,6 +5,7 @@ import os
 from logging.handlers import RotatingFileHandler
 import re
 import uuid
+import datetime
 
 
 #Creacion de las excepciones
@@ -25,28 +26,67 @@ class ValidacionEntidadError(ErrorBaseSistema):
     """Se ejecuta cuando los datos de una entidad no cumplen las reglas de negocio."""
     def __init__(self, mensaje: str):
         super().__init__(mensaje, codigo_error=400)
+
+class ServicioNoDisponibleError(ErrorBaseSistema):
+    """Se ejecuta cuando un servicio no está disponible o está inactivo."""
+    def __init__(self, nombre_servicio: str):
+        mensaje = f"El servicio {nombre_servicio} no se encuentra disponible."
+        super().__init__(mensaje, codigo_error=409)
+
+class ReservaNoDisponibleError(ErrorBaseSistema):
+    """Se ejecuts cuando una reserva no está disponible."""
+    def __init__(self, nombre_reseva: str):
+        mensaje = f"La Reseva{nombre_reseva} no se encuentra disponible."
+        super().__init__(mensaje, codigo_error=500)
     
-#Creacion de logger
-import logging
-import os
-from logging.handlers import RotatingFileHandler
+#Creacion de los loggers
+def obtener_logger(nombre_modulo: str) -> logging.Logger:
+    """Al ejecutarlo se puede configurar y devolver un logger listo para registrar eventos y errores."""
+    os.makedirs("logs", exist_ok=True)
+    logger = logging.getLogger(nombre_modulo)
+    logger.setLevel(logging.DEBUG)
+
+    if not logger.handlers:
+        formato = logging.Formatter(
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
+        consola_handler = logging.StreamHandler()
+        consola_handler.setLevel(logging.INFO)
+        consola_handler.setFormatter(formato)
+
+        archivo_handler = RotatingFileHandler(
+            "logs/sistema.log",
+            maxBytes=5_000_000,
+            backupCount=3,
+            encoding="utf-8",
+        )
+        archivo_handler.setLevel(logging.DEBUG)
+        archivo_handler.setFormatter(formato)
+
+        logger.addHandler(consola_handler)
+        logger.addHandler(archivo_handler)
+
+    return logger
+
+
+logger = obtener_logger("SoftwareFJ")
 
 def obtener_logger(nombre_modulo: str) -> logging.Logger:
     """Configura los logger listo para validar cualquier registro."""
 
 #Creacion de la clase abstracta cliente
-from abc import ABC,abstractmethod
-from datetime import datetime
-import uidd
 class entidades(ABC):
     def_init_(self):
     self.id = str(uuid.uuid4())
     self.fecha_creacion = datetime.now()
     self.fecha_actualizacion = None
     self.activo = True
-def marcar_actualizada(self):
+def marcar_actualizada(self) -> None:
     self.fecha_actualizacion = datetime.now()
 @abstractmethod
+def obtener_informacion(self)-> str:
+    pass
 def es_validar(self)->bool:
     pass
 
@@ -59,15 +99,17 @@ class entidades(ABC):
 @abstractmethod 
 def obtener_informacion(self): -> str:
     pass
+
 class cliente(entidades):
-    def_init_(self, id_entidades:str,nombre:str,apellido:str,telefono:str,gmail:str)
-    super()._init_(id_entidades)
+    def_init_(self, id_cliente:str,nombre:str,apellido:str,telefono:str,gmail:str)
+    super()._init_(id_cliente)
     #se ejecuta para modificar la clase con
 @setter
 self.nombre = nombre
 self.apellido = apellido
 self.telefono = telefono
 self.direccion = direccion
+self.gmail = gmail
 
 #Validacion del nombre mediante encapsulación 
 @property
@@ -85,35 +127,43 @@ def apellido(self)->str:
     return self._apellido
 
 @apellido.setter
-def apellido(self,valor:str):
+def apellido(self,valor:str)-> None:
     if not isintance(valor,str) or len(valor.strip())<5:
         raise ValueError("el apellido debe tener 5 caracteres.")
         self._apellido=valor.strip()
+        self.marcar_actualizado()
         
 #Validacion del telefono mediante la encapsulación 
     @property
 def telefono(self)->str:
-    return self._nombre
+    return self._telefono
     
     @telefono.setter
-def telefono(self,valor:str):
+def telefono(self,valor:str)-> None:
     if not isintance(valor,str) or not valor.strip().isdigit()ornot
         raise ValueError("el nombre debe tener 6 caracteres.")
-        self._nombre=valor.strip()
+        self._telefono = valor.strip()
+        self.marcar_actualizado()
 
-    
 #Validacion del gmail mediante la encapsulación 
     @property
-    def email(self) -> str:
-        return self.__email
+    def gmail(self) -> str:
+        return self.__gmail
 
-    @email.setter
-    def email(self, valor: str):
+    @gmail.setter
+    def gmail(self, valor: str):
         patron = r"^[\w\.-]+@[\w\.-]+\.\w+$"
         if not isinstance(valor, str) or not re.match(patron, valor):
             raise ValueError("El correo electrónico es inválido.")
-        self.__email = valor.strip().lower()
+        self.__gmail = valor.strip().lower()
+        self.marcar_actualizado
 
+   def obtener_informacion(self) -> str:
+        return (
+            f"Cliente [{self.id}]: {self.nombre} {self.apellido} | "
+            f"Correo: {self.email} | Teléfono: {self.telefono}"
+               )
+    
 #Ejecucion del método abstracto
     def obtener_informacion(self) -> str:
         return f"Cliente: {self.__nombre} {self._apellido} | Correo: {self.__email} | Telefono: {self._telefono}"
@@ -129,7 +179,7 @@ def telefono(self,valor:str):
 from abc import ABC, abstractmethod
 
 class servicio(ABC):
-    def __init__(self, id_servicio: int, nombre: str, precio: float):
+    def __init__(self, id_servicio: int, nombre: str, precio: float, disponibilidad: bool,)
         self.id_servicio = id_servicio
         self.nombre = nombre
         self.precio = precio
@@ -161,14 +211,14 @@ class servicio(ABC):
         
         @property
     def disponibilidad(self) -> bool:
-        return self._disponible
+        return self._disponibilidad
 
     @disponibilidad.setter
     def disponibilidad(self, estado: bool) -> None:
         if not isinstance(estado, bool):
             raise ValidacionEntidadError("La disponibilidad se define por ser booleano.")
         self._disponibilidad = estado
-        self.marcar_actualizada()
+        self.marcar_actualizado()
 
     def verificar_disponibilidad(self) -> None:
         """Ejecuta una excepción personalizada para el servicio sino se encuentra habilitado."""
@@ -182,6 +232,7 @@ class servicio(ABC):
         impuesto_pct: float = 0.0,
         descuento_pct: float = 0.0,
     ) -> float:
+        
 
 
 #Creacion de la clase reserva
