@@ -1,20 +1,33 @@
 #Creacion de las importaciones 
+#alicacion de la libreria ABC par clases y métodos 
 from abc import ABC, abstractmethod
+#sirve para guardar los errores
 import logging
+#sirve para guardar los archivos
 from logging.handlers import RotatingFileHandler
+#sirve para guardar los loggs si no existen
 import os
+#sirve para guardar los correos
 import re
+#sirve para guardar los identificadores
 import uuid
+#sirve para guardar las fechas 
 from datetime import datetime
 
 
 #Creacion de las excepciones
+#Creacion de la exception 
 class ErrorBaseSistema(Exception):
+#recibe un mensaje descriptivo o un código numérico
     def __init__(self, mensaje: str, codigo_error: int = 500):
+#sirve para guardar el mensaje con instancia
         self.mensaje = mensaje
+#sirve para guardar el código error 
         self.codigo_error = codigo_error
+# sirve para el constructor de la clase padre
         super().__init__(self.mensaje)
 
+#creacion de la execepcion cuando no se haya alguna de las clases (cliente,servicio y reserva)
 class EntidadNoEncontradaError(ErrorBaseSistema):
     def __init__(self, entidad: str, id_entidad: str | int):
         mensaje = f"No se hallo la entidad '{entidad}' con el ID: {id_entidad}."
