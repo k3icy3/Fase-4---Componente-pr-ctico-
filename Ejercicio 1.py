@@ -77,23 +77,26 @@ def obtener_logger(nombre_modulo: str) -> logging.Logger:
 
 #Creacion de la clase abstracta cliente
 class entidades(ABC):
-    def_init_(self):
-    self.id = str(uuid.uuid4())
+    def__init__(self, id_entidad: str | None = None):
+    self.id = str(id_entidad) if id_entidad else str (uuid.uuid4())
     self.fecha_creacion = datetime.now()
     self.fecha_actualizacion = None
     self.activo = True
-def marcar_actualizada(self) -> None:
+    
+def marcar_actualizado(self) -> None:
     self.fecha_actualizacion = datetime.now()
+    
 @abstractmethod
 def obtener_informacion(self)-> str:
     pass
+    
 def es_validar(self)->bool:
     pass
 
 import re
 from abc import ABC, abstractmethod
 class entidades(ABC):
-    def_init_(self, identidades: str):
+    def__init__(self, identidades: str):
     self._id = id_entidades
 
 @abstractmethod 
@@ -101,7 +104,7 @@ def obtener_informacion(self): -> str:
     pass
 
 class cliente(entidades):
-    def_init_(self, id_cliente:str,nombre:str,apellido:str,telefono:str,gmail:str)
+    def__init__(self, id_cliente:str,nombre:str,apellido:str,telefono:str,gmail:str | None = None,):
     super()._init_(id_cliente)
     #se ejecuta para modificar la clase con
 @setter
@@ -117,10 +120,12 @@ def nombre(self)->str:
     return self._nombre
     
 @nombre.setter
-def nombre(self,valor:str):
+def nombre(self,valor:str)-> None:
     if not isintance(valor,str) or len(valor.strip())<6:
         raise ValueError("el nombre debe tener 6 caracteres.")
-        self._nombre=valor.strip()
+        self._nombre = valor.strip()
+        self._marcar_actualizado()
+        
 #Validacion del apellido mediante la encapsulación 
 @property
 def apellido(self)->str:
@@ -128,7 +133,7 @@ def apellido(self)->str:
 
 @apellido.setter
 def apellido(self,valor:str)-> None:
-    if not isintance(valor,str) or len(valor.strip())<5:
+    if not isintance(valor,str) or len(valor.strip()) <5:
         raise ValueError("el apellido debe tener 5 caracteres.")
         self._apellido=valor.strip()
         self.marcar_actualizado()
@@ -141,7 +146,7 @@ def telefono(self)->str:
     @telefono.setter
 def telefono(self,valor:str)-> None:
     if not isintance(valor,str) or not valor.strip().isdigit()ornot
-        raise ValueError("el nombre debe tener 6 caracteres.")
+        raise ValueError("el telefon debe tener 6 caracteres.")
         self._telefono = valor.strip()
         self.marcar_actualizado()
 
@@ -156,8 +161,8 @@ def telefono(self,valor:str)-> None:
         if not isinstance(valor, str) or not re.match(patron, valor):
             raise ValueError("El correo electrónico es inválido.")
         self.__gmail = valor.strip().lower()
-        self.marcar_actualizado
-
+        self.marcar_actualizado()
+#Ejecucion de los metodos heredados
    def obtener_informacion(self) -> str:
         return (
             f"Cliente [{self.id}]: {self.nombre} {self.apellido} | "
@@ -166,7 +171,7 @@ def telefono(self,valor:str)-> None:
     
 #Ejecucion del método abstracto
     def obtener_informacion(self) -> str:
-        return f"Cliente: {self.__nombre} {self._apellido} | Correo: {self.__email} | Telefono: {self._telefono}"
+        return f"Cliente: {self.__nombre} {self._apellido} | Correo: {self.__gmail} | Telefono: {self._telefono}"
         return all([
             boll.(self.id_entiades),
             boll.(self.nombre),
@@ -176,8 +181,6 @@ def telefono(self,valor:str)-> None:
 ])
 
 #Creacion de la clase abstracta servicio
-from abc import ABC, abstractmethod
-
 class servicio(ABC):
     def __init__(self, id_servicio: int, nombre: str, precio: float, disponibilidad: bool,)
         self.id_servicio = id_servicio
