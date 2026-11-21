@@ -244,8 +244,33 @@ class servicio(ABC):
     def calcular_costo_total(self) -> float:
         """Método abstracto que las clases hijas deberán implementar."""
         pass
+        
+#Creacion de las clases hijas de servicio
+Class servicio_seguridad(servicio):
+def __init__(self, id_servicio: int | str, nombre: str, precio: float, cantidad_registroa: int = 1 disponibilidad: bool = True,
+    ):
+super().__init__(id_servicio, nombre, precio, disponibilidad)
+        if not isinstance(cantidad_registros, int) or cantidad_registros <= 0:
+            raise ValidacionEntidadError("La cantidad de registros debe ser un entero mayor a 0.")
+        self.cantidad_registros = cantidad_registros
 
+Class servicio_logistica(servicio):
+def __init__(self, id_servicio: int | str, nombre: str,  precio: float, cantidad_mercancia: int = 2 disponibilidad: bool = True,
+            ):
+super().__init__(id_servicio, nombre, precio, disponibilidad)
+         if not isinstance(cantidad_mercancia, int) or cantidad_mercancia <=0:
+             raise ValidacionEntidadError("La cantidad de mercancia en la empresa deber ser mayor a 0.")
+         self.cantidad_mercancia = cantidad_mercancia
 
+Class servicio_mantenimiento(servicio):
+def __init__(self, id_servicio: int | str, nombre: str,  precio: float, cantidad_fallos_electricos: int = 4 disponibilidad: bool = True,
+            ):
+super().__init__(id_servicio, nombre, precio, disponibilidad)
+         if not isinstance(cantidad_fallos_electricos, int) or cantidad_fallos_electricos<=0:
+             raise ValidacionEntidadError("La cantidad de fallos electricos en la empresa deber ser mayor a 0.")
+         self.cantidad_fallos_electricos = cantidad_fallos_electricos
+
+            
 #Creacion de la clase reserva
 Class reserva(Entidades):
     def __init__(self, cliente, servicio, duracion):
