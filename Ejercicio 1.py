@@ -1,8 +1,8 @@
 #Creacion de las importaciones 
 from abc import ABC, abstractmethod
 import logging
-import os
 from logging.handlers import RotatingFileHandler
+import os
 import re
 import uuid
 import datetime
@@ -162,6 +162,7 @@ def telefono(self,valor:str)-> None:
             raise ValueError("El correo electrónico es inválido.")
         self.__gmail = valor.strip().lower()
         self.marcar_actualizado()
+        
 #Ejecucion de los metodos heredados
    def obtener_informacion(self) -> str:
         return (
@@ -235,40 +236,34 @@ class servicio(ABC):
         impuesto_pct: float = 0.0,
         descuento_pct: float = 0.0,
     ) -> float:
+#Ejecucion del metodo sobrecargado
+if subtotal < 0 or impuesto_pct < 0 or descuento_pct < 0:
+            mensaje = "El subtotal, impuesto y descuento no pueden ser negativos."
+            logger.error(mensaje)
+            raise ValidacionEntidadError(
         descuento = subtotal * (descuento_pct / 100)
         base_imponible = subtotal - descuento
         impuesto = base_imponible * (impuesto_pct / 100)
         return round(base_imponible + impuesto, 2)
+    @abstractmethod
+    def calcular_costo_total(self, duracion_horas: int = 1) -> float:
+        """Método abstracto para sobreescribir un servicio."""
+        pass
+    @abstractmethod
+    def validar_parametros(self, duracion_horas: int) -> None:
+        """Método abstracto para validar cada servicio."""
+        pass
+    def es_valido(self) -> bool:
+        """Verificar el servicio que tenga nombre y precio."""
+        return bool(self._nombre) and self._precio > 0
 
     @abstractmethod
     def calcular_costo_total(self) -> float:
-        """Método abstracto que las clases hijas deberán implementar."""
+        """Método abstracto para agregar las clases hijas"""
         pass
         
 #Creacion de las clases hijas de servicio
-Class servicio_seguridad(servicio):
-def __init__(self, id_servicio: int | str, nombre: str, precio: float, cantidad_registroa: int = 1 disponibilidad: bool = True,
-    ):
-super().__init__(id_servicio, nombre, precio, disponibilidad)
-        if not isinstance(cantidad_registros, int) or cantidad_registros <= 0:
-            raise ValidacionEntidadError("La cantidad de registros debe ser un entero mayor a 0.")
-        self.cantidad_registros = cantidad_registros
 
-Class servicio_logistica(servicio):
-def __init__(self, id_servicio: int | str, nombre: str,  precio: float, cantidad_mercancia: int = 2 disponibilidad: bool = True,
-            ):
-super().__init__(id_servicio, nombre, precio, disponibilidad)
-         if not isinstance(cantidad_mercancia, int) or cantidad_mercancia <=0:
-             raise ValidacionEntidadError("La cantidad de mercancia en la empresa deber ser mayor a 0.")
-         self.cantidad_mercancia = cantidad_mercancia
-
-Class servicio_mantenimiento(servicio):
-def __init__(self, id_servicio: int | str, nombre: str,  precio: float, cantidad_fallos_electricos: int = 4 disponibilidad: bool = True,
-            ):
-super().__init__(id_servicio, nombre, precio, disponibilidad)
-         if not isinstance(cantidad_fallos_electricos, int) or cantidad_fallos_electricos<=0:
-             raise ValidacionEntidadError("La cantidad de fallos electricos en la empresa deber ser mayor a 0.")
-         self.cantidad_fallos_electricos = cantidad_fallos_electricos
 
             
 #Creacion de la clase reserva
