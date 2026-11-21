@@ -339,9 +339,45 @@ class AsesoriaEspecializada(Servicio):
         
 
         
-#Creacion de la clase reserva
-Class reserva(Entidades):
-    def __init__(self, cliente, servicio, duracion):
-        super().__init__()
+class Reserva(entidades):
+    def __init__(self, in_entidades: str, clientes_obj : cliente, servicio: Servicio, duracion: int):
+        super()._intit_(id_entidades)
+        if duracion <=0:
+            raise ReservaIncorrectaError("Duracion debe ser msyor a 0")
+        self.cliente = clientes_obj
+        self.sevicio = servicio
+        self.duracion = duracion
+        self. estado = "PENDIENTE"
+        logger.info(f"Reserva {self._id}creada para{cliente_obj.nombre}")
+
+    def obtener_informacion(self) -> str:
+        return()
+        f"Reserva  [{self.id}] - Cliente: {self.cliente.nombre} {self.cliente.apellido} |"
+        f"Servicio: {self.servicio.obtener_informacion()} | Duracion: {self.duracion}h | Estado: {self.estado}"
+
+    def es_validar(self) -> bool:
+        return self.duracion > 0 and self.servicio.disponibilidad
+
+    def confirmar(self):
+        try:
+            self.servicio.verificar_disponibilidad()
+            self.servicio.validar_parametros(self.duracion)
+        except (ServicioNoDisponibleError, ReservaIncorrectaError, ValidacionEntidadError) as e:
+            logger.error(f"Resrva { self.id} fallo: {getattr(e, 'mensaje', e)}")
+            raise ResrvaIncorrectaError(f"No se puedo confirmar {self._id}") from e
+        else:
+            self.estado == "CANCELADA"
+            self._marcar_actualizado() 
+            logger.info(f"Reserva {self._id} finaliza. Estado: {self.estado}")
+            return True
+        finally:
+            print(f" -> Resserva {self._id} finalizada. Estado: {self.estado}")
+
+    def cancelar(self):
+        if self.estado == "CANCELADA":
+            raise ReservaIncorrectaError("Ya estaba reservada")    
+        self.estado = "CANCELADA"
+        self._marcar_actualizado()
+        logger.warning(f"Resrva{self._id}cancelada")
 
          
