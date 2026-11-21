@@ -380,4 +380,53 @@ class Reserva(entidades):
         self._marcar_actualizado()
         logger.warning(f"Resrva{self._id}cancelada")
 
-         
+class SistemaFJ:
+    def __init__(self):   
+      self.clientes: list[cliente] = []   
+      self.sevicios: list[servicio] = []
+      self.reservas: list[Reserva] = []
+
+    def agregar_cliente(self, c: cliente):
+        for ex in self.clientes:
+            if ex._id == c._id or ex.gmail == c.gmail:
+                raise ValidacionEntidadError(f"Cliente duplicado: {c.id}")
+        self.clientes.append(c) 
+        logger.info(f"Cliente agregado: {c.obtener_informacion()}")
+
+    def buscar_cliente(self, gmail: str):
+        for c in self.clientes:
+            if c.gmail == gmail:
+                return c
+        raise EntidadNoEncontradaError("Cliente", gmail)
+
+if __name__ == "__main__":
+    sistema = SistemaFJ()
+    print("SOFWARE FJ -  10 OPERACIONES - Sistema nunca cae")
+
+    def ejecutar(num, desc, func):
+        print(f"\n[OP {num}] {desc}")
+        try:
+            func()
+        except ErrorBaseSistema as e:
+            print(f"Controlado: {e.mensaje} Cod: {e.codigo_error} - sigue activo")
+            logger.error(f"Op {num}: {e.mensaje}")
+        except Exception as e:   
+            print(f"Inesperado: {e}")
+        else:
+            print(f"Exito")
+        finally:
+            print("Sistema estable...")
+
+# OJO: nombre 6 letras, apellido 5, telefono 6, gmailcon @ - si no, falla a proposito
+ejecutar(1, "Cliente Valido", lambda: sistema.agregar_cliente(cliente("101","Laura","Perezs","300123","laura@mail.com", "Calle 10")))
+ejecutar(2, "Cliente inválido correo", lambda: sistema.agregar_cliente(cliente("102", "Al", "Ruiz", "300", "correo-malo")))
+ejecutar(3, "Cliente válido 2", lambda: sistema.agregar_cliente(cliente("103", "Carlos", "Ruizzz", "310987", "carlos@mail.com")))
+ejecutar(4, "Cliente duplicado", lambda: sistema.agregar_cliente(cliente("101", "Lauras", "Perezs", "300123", "laura@mail.com")))
+ejecutar(5, "Sala OK 2 auditorios", lambda: sistema.servicios.append(ReservaSala(1, "Sala Juntas", 50000, 2)))
+ejecutar(6, "Equipo OK 3 equipos + seguro 10000", lambda: sistema.servicios.append(AlquilerEquipo(2, "Video Beam", 20000, 3)))
+ejecutar(7, "Asesoría Especializada + total 1.5x", lambda: print("Total:", AsesoriaEspecializada(3, "Asesoría FJ", 80000, "Desarrollo de Software").calcular_costo_total(2)))
+ejecutar(8, "Reserva exitosa Sala 3h", lambda: Reserva("R001", sistema.clientes[0], sistema.servicios[0], 3).confirmar())
+ejecutar(9, "Reserva fallida Equipo 1h - minimo 2h", lambda: Reserva("R002", sistema.clientes[0], sistema.servicios[1], 1).confirmar())
+ejecutar(10, "Buscar inexistente", lambda: sistema.buscar_cliente("no@mail.com"))
+
+print(f"\nFIN: {len(sistema.clientes)} clientes | {len(sistema.servicios)} servicios")         
