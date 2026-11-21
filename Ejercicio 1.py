@@ -36,7 +36,6 @@ class ReservaNoDisponibleError(ErrorBaseSistema):
     
 #Creacion de los loggers
 def obtener_logger(nombre_modulo: str) -> logging.Logger:
-    """Al ejecutarlo se puede configurar y devolver un logger listo para registrar eventos y errores."""
     os.makedirs("logs", exist_ok=True)
     logger = logging.getLogger(nombre_modulo)
     logger.setLevel(logging.DEBUG)
