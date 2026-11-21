@@ -9,7 +9,7 @@ import datetime
 
 
 #Creacion de las excepciones
-class ErrorBaseSistema(Exception):
+class ErrorBaseSistema(Excepciion):
     """Excepción donde se heredan todos los errores del sistema."""
     def __init__(self, mensaje: str, codigo_error: int = 500):
         self.mensaje = mensaje
@@ -69,11 +69,7 @@ def obtener_logger(nombre_modulo: str) -> logging.Logger:
 
     return logger
 
-
 logger = obtener_logger("SoftwareFJ")
-
-def obtener_logger(nombre_modulo: str) -> logging.Logger:
-    """Configura los logger listo para validar cualquier registro."""
 
 #Creacion de la clase abstracta cliente
 class entidades(ABC):
@@ -113,6 +109,7 @@ self.apellido = apellido
 self.telefono = telefono
 self.direccion = direccion
 self.gmail = gmail
+logger.info(f"Cliente registrado: {self.nombre} {self.apellido} (ID: {self.id})")
 
 #Validacion del nombre mediante encapsulación 
 @property
@@ -122,7 +119,8 @@ def nombre(self)->str:
 @nombre.setter
 def nombre(self,valor:str)-> None:
     if not isintance(valor,str) or len(valor.strip())<6:
-        raise ValueError("el nombre debe tener 6 caracteres.")
+        raise ValidacionEntidadError("el nombre debe tener 6 caracteres.")
+        logger.error(mensaje)
         self._nombre = valor.strip()
         self._marcar_actualizado()
         
@@ -134,7 +132,8 @@ def apellido(self)->str:
 @apellido.setter
 def apellido(self,valor:str)-> None:
     if not isintance(valor,str) or len(valor.strip()) <5:
-        raise ValueError("el apellido debe tener 5 caracteres.")
+        raise ValidacionEntidadError("el apellido debe tener 5 caracteres.")
+        logger.error(mensaje)
         self._apellido=valor.strip()
         self.marcar_actualizado()
         
@@ -146,7 +145,8 @@ def telefono(self)->str:
     @telefono.setter
 def telefono(self,valor:str)-> None:
     if not isintance(valor,str) or not valor.strip().isdigit()ornot
-        raise ValueError("el telefon debe tener 6 caracteres.")
+        raise ValidacionEntidadEror("el telefon debe tener 6 caracteres.")
+        logger.error(mensaje)
         self._telefono = valor.strip()
         self.marcar_actualizado()
 
@@ -159,7 +159,8 @@ def telefono(self,valor:str)-> None:
     def gmail(self, valor: str):
         patron = r"^[\w\.-]+@[\w\.-]+\.\w+$"
         if not isinstance(valor, str) or not re.match(patron, valor):
-            raise ValueError("El correo electrónico es inválido.")
+            raise VallidacionEntidadEror("El correo electrónico es inválido.")
+            logger.error(mensaje)
         self.__gmail = valor.strip().lower()
         self.marcar_actualizado()
         
