@@ -5,7 +5,7 @@ from logging.handlers import RotatingFileHandler
 import os
 import re
 import uuid
-import datetime
+from datetime import datetime
 
 
 #Creacion de las excepciones
