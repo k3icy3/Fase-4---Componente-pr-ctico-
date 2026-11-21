@@ -200,7 +200,7 @@ class servicio(entidades, ABC):
     @precio.setter
     def precio(self, valor: float) -> None:
         if not isinstance(valor, (int, float)) or valor <= 0:
-            mensaje = f"La tarifa base debe ser mayor a 0. Valor recibido: {valor}"
+            mensaje = f"La tarifa debe ser mayor a 0. Valor recibido: {valor}"
             logger.error(mensaje)
             raise ValidacionEntidadError(mensaje)
         self._precio = float(valor)
@@ -213,12 +213,11 @@ class servicio(entidades, ABC):
     @disponibilidad.setter
     def disponibilidad(self, estado: bool) -> None:
         if not isinstance(estado, bool):
-            raise ValidacionEntidadError("La disponibilidad se define por ser booleano.")
+            raise ValidacionEntidadError("La disponibilidad se determina por ser booleano.")
         self._disponibilidad = estado
         self.marcar_actualizado()
 
     def verificar_disponibilidad(self) -> None:
-        """Ejecuta una excepción personalizada para el servicio sino se encuentra habilitado."""
         if not self._disponibilidad or not self.activo:
             logger.warning(f"Intento de ingreso al servicio no disponible: {self._nombre}")
             raise ServicioNoDisponibleError(self._nombre)
@@ -229,6 +228,7 @@ class servicio(entidades, ABC):
         impuesto_pct: float = 0.0,
         descuento_pct: float = 0.0,
     ) -> float:
+        
 #Ejecucion del metodo sobrecargado
 if subtotal < 0 or impuesto_pct < 0 or descuento_pct < 0:
             mensaje = "El subtotal, impuesto y descuento no pueden ser negativos."
@@ -238,16 +238,15 @@ if subtotal < 0 or impuesto_pct < 0 or descuento_pct < 0:
         base_imponible = subtotal - descuento
         impuesto = base_imponible * (impuesto_pct / 100)
         return round(base_imponible + impuesto, 2)
+
     @abstractmethod
     def calcular_costo_total(self, duracion_horas: int = 1) -> float:
-        """Método abstracto para sobreescribir un servicio."""
         pass
+        
     @abstractmethod
     def validar_parametros(self, duracion_horas: int) -> None:
-        """Método abstracto para validar cada servicio."""
         pass
     def es_valido(self) -> bool:
-        """Verificar el servicio que tenga nombre y precio."""
         return bool(self._nombre) and self._precio > 0
 
         
