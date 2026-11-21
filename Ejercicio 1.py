@@ -182,7 +182,7 @@ def telefono(self,valor:str)-> None:
 
 #Creacion de la clase abstracta servicio
 class servicio(ABC):
-    def __init__(self, id_servicio: int, nombre: str, precio: float, disponibilidad: bool,)
+    def __init__(self, id_servicio: int, nombre: str, precio: float, disponibilidad: bool,)-> None:
         self.id_servicio = id_servicio
         self.nombre = nombre
         self.precio = precio
@@ -235,7 +235,15 @@ class servicio(ABC):
         impuesto_pct: float = 0.0,
         descuento_pct: float = 0.0,
     ) -> float:
-        
+        descuento = subtotal * (descuento_pct / 100)
+        base_imponible = subtotal - descuento
+        impuesto = base_imponible * (impuesto_pct / 100)
+        return round(base_imponible + impuesto, 2)
+
+    @abstractmethod
+    def calcular_costo_total(self) -> float:
+        """Método abstracto que las clases hijas deberán implementar."""
+        pass
 
 
 #Creacion de la clase reserva
