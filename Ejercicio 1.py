@@ -95,7 +95,6 @@ def obtener_informacion(self): -> str:
 class cliente(entidades):
     def__init__(self, id_cliente:str,nombre:str,apellido:str,telefono:str,gmail:str | None = None,):
     super().__init__(id_cliente)
-#se ejecuta para modificar la clase con
 self.nombre = nombre
 self.apellido = apellido
 self.telefono = telefono
