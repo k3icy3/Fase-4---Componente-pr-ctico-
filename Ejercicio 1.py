@@ -9,7 +9,7 @@ from datetime import datetime
 
 
 #Creacion de las excepciones
-class ErrorBaseSistema(Excepciion):
+class ErrorBaseSistema(Exception):
     """Excepción donde se heredan todos los errores del sistema."""
     def __init__(self, mensaje: str, codigo_error: int = 500):
         self.mensaje = mensaje
@@ -35,8 +35,8 @@ class ServicioNoDisponibleError(ErrorBaseSistema):
 
 class ReservaNoDisponibleError(ErrorBaseSistema):
     """Se ejecuts cuando una reserva no está disponible."""
-    def __init__(self, nombre_reseva: str):
-        mensaje = f"La Reseva{nombre_reseva} no se encuentra disponible."
+    def __init__(self, nombre_reserva: str):
+        mensaje = f"La Reseva{nombre_reserva} no se encuentra disponible."
         super().__init__(mensaje, codigo_error=500)
     
 #Creacion de los loggers
@@ -73,8 +73,8 @@ logger = obtener_logger("SoftwareFJ")
 
 #Creacion de la clase abstracta cliente
 class entidades(ABC):
-    def__init__(self, id_entidad: str | None = None):
-    self.id = str(id_entidad) if id_entidad else str (uuid.uuid4())
+    def__init__(self, id_entidades: str | None = None):
+    self.id = str(id_entidades) if id_entidades else str (uuid.uuid4())
     self.fecha_creacion = datetime.now()
     self.fecha_actualizacion = None
     self.activo = True
@@ -89,10 +89,9 @@ def obtener_informacion(self)-> str:
 def es_validar(self)->bool:
     pass
 
-import re
-from abc import ABC, abstractmethod
+
 class entidades(ABC):
-    def__init__(self, identidades: str):
+    def__init__(self, id_entidades: str):
     self._id = id_entidades
 
 @abstractmethod 
@@ -101,7 +100,7 @@ def obtener_informacion(self): -> str:
 
 class cliente(entidades):
     def__init__(self, id_cliente:str,nombre:str,apellido:str,telefono:str,gmail:str | None = None,):
-    super()._init_(id_cliente)
+    super().__init__(id_cliente)
     #se ejecuta para modificar la clase con
 @setter
 self.nombre = nombre
@@ -183,7 +182,7 @@ def telefono(self,valor:str)-> None:
 ])
 
 #Creacion de la clase abstracta servicio
-class servicio(ABC):
+class servicio(entidades, ABC):
     def __init__(self, id_servicio: int, nombre: str, precio: float, disponibilidad: bool,)-> None:
         self.id_servicio = id_servicio
         self.nombre = nombre
@@ -258,10 +257,6 @@ if subtotal < 0 or impuesto_pct < 0 or descuento_pct < 0:
         """Verificar el servicio que tenga nombre y precio."""
         return bool(self._nombre) and self._precio > 0
 
-    @abstractmethod
-    def calcular_costo_total(self) -> float:
-        """Método abstracto para agregar las clases hijas"""
-        pass
         
 #Creacion de las clases hijas de servicio
 class ReservaSala(Servicio):
