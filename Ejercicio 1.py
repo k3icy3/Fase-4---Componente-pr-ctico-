@@ -264,9 +264,86 @@ if subtotal < 0 or impuesto_pct < 0 or descuento_pct < 0:
         pass
         
 #Creacion de las clases hijas de servicio
+class ReservaSala(Servicio):
+      def __init__(self,id_servicio: int | str, nombre: str,  precio: float, cantidad_auditorios: int = 1, disponibilidad: bool = True,) -> None:
+        super().__init__(id_servicio, nombre, precio, disponibilidad)
+        if not isinstance(cantidad_auditorios, int) or cantidad_auditorios <= 0:
+            mensaje = "La cantidad de auditorios debe ser un entero mayor a 0."
+            logger.error(mensaje)
+            raise ValidacionEntidadError(mensaje)
+        self.cantidad_auditorios = cantidad_auditorios
+        logger.info(f"Servicio ReservaSala '{self.nombre}' creado con {self.cantidad_auditorios} auditorio(s).")
 
+    def validar_parametros(self, duracion_horas: int) -> None:
+        if duracion_horas > 12:
+            raise ValidacionEntidadError("Los auditorios no pueden reservarse por 7 horas seguidas.")
 
-            
+    def calcular_costo_total(self, duracion_horas: int = 1) -> float:
+        """Realiza la siguiente operacion."""
+        return round(self.precio * duracion_horas * self.cantidad_auditorios, 4)
+
+    def obtener_informacion(self) -> str:
+        """Metodo de poliformismo."""
+        return (
+            f"Reserva de Sala [{self.id}]: {self.nombre} | "
+            f"Tarifa/h: ${self.precio:,.2f} | Auditorios: {self.cantidad_auditorios} | "
+            f"Disponible: {self.disponibilidad}"
+)
+
+class AlquilerEquipo(Servicio):
+def __init__( self, id_servicio: int | str, nombre: str, precio: float cantidad_equipos: int = 1disponibilidad: bool = True, ) -> None:
+        super().__init__(id_servicio, nombre, precio, disponibilidad)
+        if not isinstance(cantidad_equipos, int) or cantidad_equipos <= 0:
+            mensaje = "La cantidad de equipos a alquilar debe ser un entero mayor a 0."
+            logger.error(mensaje)
+            raise ValidacionEntidadError(mensaje)
+        self.cantidad_equipos = cantidad_equipos
+        logger.info(f"Servicio AlquilerEquipo '{self.nombre}' ha sido ejecutado correctamente.")
+
+    def validar_parametros(self, duracion_horas: int) -> None:
+         if duracion_horas < 2:
+            raise ValidacionEntidadError("El alquiler de equipos requiere un mínimo de 2 horas.")
+
+    def calcular_costo_total(self, duracion_horas: int = 1) -> float:
+        """ Realiza la siguiente operación agregando un seguro fijo."""
+        seguro_equipo = 10000.0
+        return round((self.precio * duracion_horas * self.cantidad_equipos) + seguro_equipo, 2)
+
+    def obtener_informacion(self) -> str:
+        """Metodo de poliformismo."""
+        return (
+            f"Alquiler de Equipos [{self.id}]: {self.nombre} | "
+            f"Tarifa/h: ${self.precio:,.2f} | Equipos: {self.cantidad_equipos} | "
+            f"Disponible: {self.disponibilidad}"
+        )
+
+class AsesoriaEspecializada(Servicio):
+ def __init__( self,id_servicio: int | str,  nombre: str, precio: float,especialidad: str = "Desarrollo de Software", disponibilidad: bool = True, ) -> None:
+        super().__init__(id_servicio, nombre, precio, disponibilidad)
+        if not isinstance(especialidad, str) or len(especialidad.strip()) < 3:
+            mensaje = "La especialidad de la asesoría debe tener al menos 3 caracteres."
+            logger.error(mensaje)
+            raise ValidacionEntidadError(mensaje)
+        self.especialidad = especialidad.strip()
+        logger.info(f"Servicio AsesoriaEspecializada '{self.nombre}' ha sido ejecutado correctamente.")
+
+    def validar_parametros(self, duracion_horas: int) -> None:
+        if duracion_horas <= 0:
+            raise ValidacionEntidadError("La duración de la asesoría debe ser mayor a 0 horas.")
+
+    def calcular_costo_total(self, duracion_horas: int = 1) -> float:
+        """Realiza la siguiente operación para calcular el costo total."""
+        return round(self.precio * duracion_horas, 2)
+
+    def obtener_informacion(self) -> str:
+        """Metodo de poliformismo"""
+        return (
+            f"Asesoría Especializada [{self.id}]: {self.nombre} ({self.especialidad}) | "
+            f"Tarifa/h: ${self.precio:,.2f} | Disponible: {self.disponibilidad}"
+    )
+        
+
+        
 #Creacion de la clase reserva
 Class reserva(Entidades):
     def __init__(self, cliente, servicio, duracion):
