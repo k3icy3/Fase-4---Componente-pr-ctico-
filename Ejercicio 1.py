@@ -29,35 +29,57 @@ class ErrorBaseSistema(Exception):
 
 #creacion de la execepcion cuando no se haya alguna de las clases (cliente,servicio y reserva)
 class EntidadNoEncontradaError(ErrorBaseSistema):
+#sirve para construir el nombre para la entidad y el identificador
     def __init__(self, entidad: str, id_entidad: str | int):
+#sirve para hallar el error de identidad no encontrado
         mensaje = f"No se hallo la entidad '{entidad}' con el ID: {id_entidad}."
+#sirve para iniciar la clase 404
         super().__init__(mensaje, codigo_error=404)
 
+#creación de la excepción para los datos de entrada
 class ValidacionEntidadError(ErrorBaseSistema):
-    def __init__(self, mensaje: str):
+#sirve para construir el dato del error para validar
+    def __init__(self, mensajeentrada
+#sirve para iniciar la clase 400
         super().__init__(mensaje, codigo_error=400)
 
+#creación de la excepción cuando un servicio no está disponible
 class ServicioNoDisponibleError(ErrorBaseSistema):
+#sirve para construir el nombre de servicio
     def __init__(self, nombre_servicio: str):
+#sirve para el mensaje de no disponibilidad
         mensaje = f"El servicio {nombre_servicio} no se encuentra disponible."
+#sirve para iniciar la clase 409
         super().__init__(mensaje, codigo_error=409)
 
+#creación de la excepción para los parámetros y reserva
 class ReservaNoDisponibleError(ErrorBaseSistema):
+#sirve para construir el error de reserva
     def __init__(self, nombre_reserva: str):
+#sirve para el mensaje de error de reserva
         mensaje = f"La Reseva{nombre_reserva} no se encuentra disponible."
+#sirve para iniciar la clase 500
         super().__init__(mensaje, codigo_error=500)
     
 #Creacion de los loggers
+#sirve para configurar y retornar el logger
 def obtener_logger(nombre_modulo: str) -> logging.Logger:
+#sirve para crear las carpetas logs
     os.makedirs("logs", exist_ok=True)
+#sirve para guardar registro
     logger = logging.getLogger(nombre_modulo)
+#sirve para verificar y evitar la duplicidad de logs
     logger.setLevel(logging.DEBUG)
-
+#sirve para definir el formato en línea
     if not logger.handlers:
+#sirve para mostrar logs por consulta 
         formato = logging.Formatter(
+#sirve para demostrar el nivel info
             "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+#sirve para manejar el formato
             datefmt="%Y-%m-%d %H:%M:%S",
         )
+
         consola_handler = logging.StreamHandler()
         consola_handler.setLevel(logging.INFO)
         consola_handler.setFormatter(formato)
@@ -68,14 +90,17 @@ def obtener_logger(nombre_modulo: str) -> logging.Logger:
             backupCount=3,
             encoding="utf-8",
         )
+#sirve para guardar los archivos debug
         archivo_handler.setLevel(logging.DEBUG)
+#sirve para manejar el formato archivo
         archivo_handler.setFormatter(formato)
-
+#sirve para manejar por consola el logger
         logger.addHandler(consola_handler)
+#sirve para manejar el archivo logger
         logger.addHandler(archivo_handler)
-
+#sirve para retornar el logger
     return logger
-
+#sirve para iniciar el logger para todo el software FJ
 logger = obtener_logger("SoftwareFJ")
 
 #Creacion de la clase abstracta cliente
