@@ -10,31 +10,26 @@ from datetime import datetime
 
 #Creacion de las excepciones
 class ErrorBaseSistema(Exception):
-    """Excepción donde se heredan todos los errores del sistema."""
     def __init__(self, mensaje: str, codigo_error: int = 500):
         self.mensaje = mensaje
         self.codigo_error = codigo_error
         super().__init__(self.mensaje)
 
 class EntidadNoEncontradaError(ErrorBaseSistema):
-    """Se ejecuta cuando no se halla ningun registro o entidad."""
     def __init__(self, entidad: str, id_entidad: str | int):
         mensaje = f"No se hallo la entidad '{entidad}' con el ID: {id_entidad}."
         super().__init__(mensaje, codigo_error=404)
 
 class ValidacionEntidadError(ErrorBaseSistema):
-    """Se ejecuta cuando los datos de una entidad no cumplen las reglas de negocio."""
     def __init__(self, mensaje: str):
         super().__init__(mensaje, codigo_error=400)
 
 class ServicioNoDisponibleError(ErrorBaseSistema):
-    """Se ejecuta cuando un servicio no está disponible o está inactivo."""
     def __init__(self, nombre_servicio: str):
         mensaje = f"El servicio {nombre_servicio} no se encuentra disponible."
         super().__init__(mensaje, codigo_error=409)
 
 class ReservaNoDisponibleError(ErrorBaseSistema):
-    """Se ejecuts cuando una reserva no está disponible."""
     def __init__(self, nombre_reserva: str):
         mensaje = f"La Reseva{nombre_reserva} no se encuentra disponible."
         super().__init__(mensaje, codigo_error=500)
