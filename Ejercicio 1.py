@@ -229,27 +229,31 @@ def telefono(self,valor:str)-> None:
 
 #Creacion de la clase abstracta servicio
 class servicio(entidades, ABC):
+#sirve para construir servicio 
     def __init__(self, id_servicio: int, nombre: str, precio: float, disponibilidad: bool,)-> None:
+#sirve para asignar los atributos
         self.id_servicio = id_servicio
         self.nombre = nombre
         self.precio = precio
         self.disponibilidad = disponibilidad 
         
+#validación del nombre mediante la encapsulación getter
     @property
     def nombre(self) -> str:
         return self._nombre
-        
+#validación del nombre mediante la encápsulación settee
     @nombre.setter
     def nombre(self, valor: str) -> None:
         if not isinstance(valor, str) or len(valor.strip()) < 3:
             raise ValidacionEntidadError(mensaje)
         self._nombre = valor.strip()
         self.marcar_actualizado()
-
+        
+#validación de precio mediante la encapsulación getter
      @property
        def precio(self) -> float:
         return self._precio
-
+#validación de precio mediante la encapsulación setter
     @precio.setter
     def precio(self, valor: float) -> None:
         if not isinstance(valor, (int, float)) or valor <= 0:
@@ -258,23 +262,24 @@ class servicio(entidades, ABC):
             raise ValidacionEntidadError(mensaje)
         self._precio = float(valor)
         self.marcar_actualizada()
-        
+
+#validación de la disponibilidad mediante la encapsulación getter
         @property
     def disponibilidad(self) -> bool:
         return self._disponibilidad
-
+#validación de la disponibilidad mediante la encapsulación setter
     @disponibilidad.setter
     def disponibilidad(self, estado: bool) -> None:
         if not isinstance(estado, bool):
             raise ValidacionEntidadError("La disponibilidad se determina por ser booleano.")
         self._disponibilidad = estado
         self.marcar_actualizado()
-
+#verificación del servicio si está disponible
     def verificar_disponibilidad(self) -> None:
         if not self._disponibilidad or not self.activo:
             logger.warning(f"Intento de ingreso al servicio no disponible: {self._nombre}")
             raise ServicioNoDisponibleError(self._nombre)
-
+#aplicación de los ajustes de costo
     def aplicar_ajustes_costo(
         self,
         subtotal: float,
@@ -287,25 +292,32 @@ if subtotal < 0 or impuesto_pct < 0 or descuento_pct < 0:
             mensaje = "El subtotal, impuesto y descuento no pueden ser negativos."
             logger.error(mensaje)
             raise ValidacionEntidadError(
+#sirve para calcular el descuento
         descuento = subtotal * (descuento_pct / 100)
+#sirve para restar el subtotal del descuento
         base_imponible = subtotal - descuento
+#sirve para calcular el impuesto imponible
         impuesto = base_imponible * (impuesto_pct / 100)
+#sirve para retornar el redondeo a dos decimales
         return round(base_imponible + impuesto, 2)
-
+#metodo abstracto para calcular el costo
     @abstractmethod
     def calcular_costo_total(self, duracion_horas: int = 1) -> float:
         pass
-        
+#método abstracto para evaluar la duración de cada servicio
     @abstractmethod
     def validar_parametros(self, duracion_horas: int) -> None:
         pass
+#Inclusion del metodo abstracto es_validar
     def es_valido(self) -> bool:
         return bool(self._nombre) and self._precio > 0
 
         
 #Creacion de las clases hijas de servicio
 class ReservaSala(Servicio):
+#sirve para construir servicio
       def __init__(self,id_servicio: int | str, nombre: str,  precio: float, cantidad_auditorios: int = 1, disponibilidad: bool = True,) -> None:
+#sirve para llamar el constructor de entidades
         super().__init__(id_servicio, nombre, precio, disponibilidad)
         if not isinstance(cantidad_auditorios, int) or cantidad_auditorios <= 0:
             mensaje = "La cantidad de auditorios debe ser un entero mayor a 0."
