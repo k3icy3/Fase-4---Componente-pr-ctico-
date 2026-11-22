@@ -129,6 +129,7 @@ def marcar_actualizado(self) -> None:
 @abstractmethod
 def obtener_informacion(self) -> str:
     pass
+    
 #método abstracto para validar la integridad
 @abstractmethod
 def es_validar(self) -> bool:
@@ -137,7 +138,7 @@ def es_validar(self) -> bool:
 #creacion de la clase hija cliente
 class cliente(entidades):
 #sirve para constructor del cliente con validación
-    def __init__(self, id_cliente: str, nombre: str, apellido: str, telefono: str, gmail: str, direccion: str = ""):
+    def __init__(self, id_cliente: str | None, nombre: str, apellido: str, telefono: str, gmail: str, direccion: str = ""):
     #sirve para llamar al constructor de entidades
     super().__init__(id_cliente)
     #sirve para asignar y validar el nombre,apellido,telefono,direccion,gmail
@@ -159,7 +160,7 @@ def nombre(self) -> str:
 @nombre.setter
 def nombre(self,valor:str)-> None:
     #sirve para validar el nombre que contenga sus 6 caracteres
-    if not isintance(valor, str) or len(valor.strip())<6:
+    if not isinstance(valor, str) or len(valor.strip())<6:
         #sirve para guardar el error dentro del log
         logger.error(mensaje
         #sirve para guardar el mensaje de error
@@ -178,8 +179,8 @@ def apellido(self) -> str:
 #validación del apellido mediante la cancelación con setter
 @apellido.setter
 def apellido(self, valor: str) -> None:
-    #sirve para validar el apellido que contenga seis caracteres
-    if not isintance(valor,str) or len(valor.strip()) <5:
+    #sirve para validar el apellido que contenga cinco caracteres
+    if not isinstance(valor,str) or len(valor.strip()) <5:
         #sirve para definir el mensaje de error dentro del log
         mensaje = "el apellido debe tener 5 caracteres.")
         #sirve para guardar el error en el log
@@ -200,10 +201,10 @@ def telefono(self) -> str:
 #validación del teléfono mediante la encapsulación setter
     @telefono.setter
 def telefono(self, valor: str)-> None:
-    #sirve para validar que el teléfono tenga seis dígitos
-    if not isintance(valor,str) or not valor.strip().isdigit() or len(valor.strip()) <7:
+    #sirve para validar que el teléfono tenga siete dígitos
+    if not isinstance(valor,str) or not valor.strip().isdigit() or len(valor.strip()) <7:
     #sirve para definir el mensaje error 
-    mensaje = "el teléfono debe 7 dígitos."
+    mensaje = "el teléfono debe tener 7 dígitos."
         raise ValidacionEntidadEror("el telefono debe tener 7 digitoss.")
         #sirve para guardar el error dentro del log
         logger.error(mensaje)
@@ -258,9 +259,9 @@ def telefono(self, valor: str)-> None:
 #Creacion de la clase abstracta servicio
 class servicio(entidades, ABC):
 #sirve para construir servicio 
-    def __init__(self, id_servicio: int | str, nombre: str, precio: float, disponibilidad: bool = True) -> None:
+    def __init__(self, id_servicio: int | str| None, nombre: str, precio: float, disponibilidad: bool = True) -> None:
         #sirve para llamar al constructor padre
-        super().__init__(id_servicio)
+        super().__init__(id_servicio) if id_servicio is not None else None)
         #sirve para asignar los atributos
         self.nombre = nombre
         self.precio = precio
@@ -377,7 +378,7 @@ if subtotal < 0 or impuesto_pct < 0 or descuento_pct < 0:
 #Creacion de la clase hija reserva sala de servicio
 class ReservaSala(Servicio):
       #sirve para construir la cantidad de auditorios
-      def __init__(self,id_servicio: int | str, nombre: str,  precio: float, cantidad_auditorios: int = 1, disponibilidad: bool = True,) -> None:
+      def __init__(self,id_servicio: int | str| None, nombre: str,  precio: float, cantidad_auditorios: int = 1, disponibilidad: bool = True,) -> None:
       #sirve para llamar el constructor de servicio 
         super().__init__(id_servicio, nombre, precio, disponibilidad)
       #sirve para validar la cantidad de auditorios
@@ -416,7 +417,7 @@ class ReservaSala(Servicio):
 #creación de la clase hija alquiler de equipo de servicio
 class AlquilerEquipo(Servicio):
 #sirve para construir la cantidad de equipos
-def __init__( self, id_servicio: int | str, nombre: str, precio: float cantidad_equipos: int = 1disponibilidad: bool = True, ) -> None:
+def __init__( self, id_servicio: int | str | None, nombre: str, precio: float cantidad_equipos: int = 1disponibilidad: bool = True, ) -> None:
         #sirve para llamar al constructor de servicio
         super().__init__(id_servicio, nombre, precio, disponibilidad)
         #sirve para validar la cantidad de equipos
@@ -460,7 +461,7 @@ def __init__( self, id_servicio: int | str, nombre: str, precio: float cantidad_
 #creación de la clase hija asesoría especializada de servicio
 class AsesoriaEspecializada(Servicio):
 #sirve para construir la especialidad tecnica
- def __init__( self,id_servicio: int | str,  nombre: str, precio: float,especialidad: str = "Desarrollo de Software", disponibilidad: bool = True, ) -> None:
+ def __init__( self,id_servicio: int | str | None,  nombre: str, precio: float,especialidad: str = "Desarrollo de Software", disponibilidad: bool = True, ) -> None:
 #sirve para llamar al constructor de servicio
         super().__init__(id_servicio, nombre, precio, disponibilidad)
         #sirve para validar el nombre de la especialidad
@@ -486,7 +487,7 @@ class AsesoriaEspecializada(Servicio):
     #sirve para calcular el costo total de la especialidad con 1.8x
     def calcular_costo_total(self, duracion_horas: int = 1) -> float:
         #sirve para retornar el multiplicado
-        return round(self.precio * duracion_horas, * 1.8, 2)
+        return round(self.precio * duracion_horas, 2)
     #sirve para escribir el servicio asesoría especializada
         
     def obtener_informacion(self) -> str:
