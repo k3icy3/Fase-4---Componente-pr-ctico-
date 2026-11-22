@@ -103,21 +103,35 @@ def obtener_logger(nombre_modulo: str) -> logging.Logger:
 #sirve para iniciar el logger para todo el software FJ
 logger = obtener_logger("SoftwareFJ")
 
-#Creacion de la clase abstracta cliente
+#Creacion de la clase abstracta 
 class entidades(ABC):
+#sirve para la creación del id
     def__init__(self, id_entidades: str | None = None):
+#sirve para enviar el id en texto o este mismo genera uuid
     self.id = str(id_entidades) if id_entidades else str (uuid.uuid4())
+#sirve para guardar la fecha
     self.fecha_creacion = datetime.now()
+#sirve para iniciar la fecha con None
     self.fecha_actualizacion = None
+#sirve para que la entidad esté activa
     self.activo = True
-    
+#sirve para la propiedad de lectura para consultar el ID encapsulado
+    @property
+    def id(self) -> str:
+#sirve para retornar el identificador 
+        return self._id
+#sirve para la propiedad de lectura en el id encapsulado
+
+#método de actualizar la fecha
 def marcar_actualizado(self) -> None:
+#sirve para asignar la fecha
     self.fecha_actualizacion = datetime.now()
-    
+#método abstracto para escribir la identidad
 @abstractmethod
 def obtener_informacion(self)-> str:
     pass
-    
+#método abstracto para validar la integridad
+@abstractmethod
 def es_validar(self)->bool:
     pass
 
