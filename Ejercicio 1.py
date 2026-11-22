@@ -1,17 +1,18 @@
 # ==================================================
-# CREACIÓN DE LAS IMPORTACIONES
+# SISTEMA DE RESERVAS - CÓDIGO COMPLETO
 # ==================================================
+
 from abc import ABC, abstractmethod
-import logging
-from logging.handlers import RotatingFileHandler
 import os
 import re
 import uuid
 from datetime import datetime
+import logging
+from logging.handlers import RotatingFileHandler
 
 
 # ==================================================
-# CREACIÓN DE LAS EXCEPCIONES
+# EXCEPCIONES
 # ==================================================
 class ErrorBaseSistema(Exception):
     def __init__(self, mensaje: str, codigo_error: int = 500):
@@ -37,25 +38,18 @@ class ServicioNoDisponibleError(ErrorBaseSistema):
         super().__init__(mensaje, codigo_error=409)
 
 
-class ReservaNoDisponibleError(ErrorBaseSistema):
-    def __init__(self, nombre_reserva: str):
-        mensaje = f"La Reserva '{nombre_reserva}' no se encuentra disponible."
-        super().__init__(mensaje, codigo_error=500)
-
-
 class ReservaIncorrectaError(ErrorBaseSistema):
     def __init__(self, mensaje: str):
         super().__init__(mensaje, codigo_error=400)
 
 
 # ==================================================
-# CONFIGURACIÓN DE LOS LOGS
+# CONFIGURACIÓN DE LOGS
 # ==================================================
 def obtener_logger(nombre_modulo: str) -> logging.Logger:
     os.makedirs("logs", exist_ok=True)
     logger = logging.getLogger(nombre_modulo)
     logger.setLevel(logging.DEBUG)
-
     if not logger.handlers:
         formato = logging.Formatter(
             "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -110,13 +104,14 @@ class Entidades(ABC):
 # CLASE CLIENTE
 # ==================================================
 class Cliente(Entidades):
-    def __init__(self, id_cliente: str | None, nombre: str, apellido: str, telefono: str, gmail: str, direccion: str = ""):
+    def __init__(self, id_cliente: str | None, nombre: str, apellido: str,
+                 telefono: str, gmail: str, direccion: str = ""):
         super().__init__(id_cliente)
-        self.nombre = nombre
-        self.apellido = apellido
-        self.telefono = telefono
-        self.direccion = direccion
-        self.gmail = gmail
+        self._nombre = nombre
+        self._apellido = apellido
+        self._telefono = telefono
+        self._direccion = direccion
+        self._gmail = gmail
         logger.info(f"Cliente registrado: {self.nombre} {self.apellido} (ID: {self.id})")
 
     @property
@@ -172,6 +167,10 @@ class Cliente(Entidades):
         self.__gmail = valor.strip().lower()
         self.marcar_actualizado()
 
+    @property
+    def direccion(self) -> str:
+        return self._direccion
+
     def obtener_informacion(self) -> str:
         return (
             f"Cliente [{self.id}]: {self.nombre} {self.apellido} | "
@@ -179,18 +178,20 @@ class Cliente(Entidades):
         )
 
     def es_validar(self) -> bool:
-        return all([bool(self.id), bool(self.nombre), bool(self.apellido), bool(self.telefono), bool(self.gmail)])
+        return all([bool(self.id), bool(self.nombre), bool(self.apellido),
+                    bool(self.telefono), bool(self.gmail)])
 
 
 # ==================================================
 # CLASE ABSTRACTA SERVICIO
 # ==================================================
 class Servicio(Entidades, ABC):
-    def __init__(self, id_servicio: int | str | None, nombre: str, precio: float, disponibilidad: bool = True):
+    def __init__(self, id_servicio: int | str | None, nombre: str,
+                 precio: float, disponibilidad: bool = True):
         super().__init__(id_servicio)
-        self.nombre = nombre
-        self.precio = precio
-        self.disponibilidad = disponibilidad
+        self._nombre = nombre
+        self._precio = precio
+        self._disponibilidad = disponibilidad
 
     @property
     def nombre(self) -> str:
@@ -236,7 +237,8 @@ class Servicio(Entidades, ABC):
             logger.warning(f"Intento de acceso a servicio no disponible: {self._nombre}")
             raise ServicioNoDisponibleError(self._nombre)
 
-    def aplicar_ajustes_costo(self, subtotal: float, impuesto_pct: float = 0.0, descuento_pct: float = 0.0) -> float:
+    def aplicar_ajustes_costo(self, subtotal: float, impuesto_pct: float = 0.0,
+                               descuento_pct: float = 0.0) -> float:
         if subtotal < 0 or impuesto_pct < 0 or descuento_pct < 0:
             mensaje = "El subtotal, impuesto y descuento no pueden ser negativos."
             logger.error(mensaje)
@@ -259,10 +261,11 @@ class Servicio(Entidades, ABC):
 
 
 # ==================================================
-# CLASES HIJAS DE SERVICIO
+# SERVICIO: RESERVA DE SALA
 # ==================================================
 class ReservaSala(Servicio):
-    def __init__(self, id_servicio: int | str | None, nombre: str, precio: float, cantidad_auditorios: int = 1, disponibilidad: bool = True):
+    def __init__(self, id_servicio: int | str | None, nombre: str, precio: float,
+                 cantidad_auditorios: int = 1, disponibilidad: bool = True):
         super().__init__(id_servicio, nombre, precio, disponibilidad)
         if not isinstance(cantidad_auditorios, int) or cantidad_auditorios <= 0:
             mensaje = "La cantidad de auditorios debe ser un entero mayor a 0."
@@ -281,13 +284,18 @@ class ReservaSala(Servicio):
     def obtener_informacion(self) -> str:
         return (
             f"Reserva de Sala [{self.id}]: {self.nombre} | "
-            f"Tarifa/h: ${self.precio:,.2f} | Auditorios: {self.cantidad_auditorios} | "
+            f"Tarifa/h: ${self.precio:,.2f} | "
+            f"Auditorios: {self.cantidad_auditorios} | "
             f"Disponible: {self.disponibilidad}"
         )
 
 
+# ==================================================
+# SERVICIO: ALQUILER DE EQUIPO
+# ==================================================
 class AlquilerEquipo(Servicio):
-    def __init__(self, id_servicio: int | str | None, nombre: str, precio: float, cantidad_equipos: int = 1, disponibilidad: bool = True):
+    def __init__(self, id_servicio: int | str | None, nombre: str, precio: float,
+                 cantidad_equipos: int = 1, disponibilidad: bool = True):
         super().__init__(id_servicio, nombre, precio, disponibilidad)
         if not isinstance(cantidad_equipos, int) or cantidad_equipos <= 0:
             mensaje = "La cantidad de equipos a alquilar debe ser un entero mayor a 0."
@@ -308,13 +316,18 @@ class AlquilerEquipo(Servicio):
     def obtener_informacion(self) -> str:
         return (
             f"Alquiler de Equipos [{self.id}]: {self.nombre} | "
-            f"Tarifa/h: ${self.precio:,.2f} | Equipos: {self.cantidad_equipos} | "
+            f"Tarifa/h: ${self.precio:,.2f} | "
+            f"Equipos: {self.cantidad_equipos} | "
             f"Disponible: {self.disponibilidad}"
         )
 
 
+# ==================================================
+# SERVICIO: ASESORÍA ESPECIALIZADA
+# ==================================================
 class AsesoriaEspecializada(Servicio):
-    def __init__(self, id_servicio: int | str | None, nombre: str, precio: float, especialidad: str = "Desarrollo de Software", disponibilidad: bool = True):
+    def __init__(self, id_servicio: int | str | None, nombre: str, precio: float,
+                 especialidad: str = "Desarrollo de Software", disponibilidad: bool = True):
         super().__init__(id_servicio, nombre, precio, disponibilidad)
         if not isinstance(especialidad, str) or len(especialidad.strip()) < 3:
             mensaje = "La especialidad de la asesoría debe tener al menos 3 caracteres."
@@ -341,7 +354,8 @@ class AsesoriaEspecializada(Servicio):
 # CLASE RESERVA
 # ==================================================
 class Reserva(Entidades):
-    def __init__(self, id_reserva: str, cliente_obj: Cliente, servicio: Servicio, duracion: int):
+    def __init__(self, id_reserva: str, cliente_obj: Cliente,
+                 servicio: Servicio, duracion: int):
         super().__init__(id_reserva)
         if duracion <= 0:
             raise ReservaIncorrectaError("La duración debe ser mayor a 0 horas.")
@@ -370,13 +384,4 @@ class Reserva(Entidades):
             raise ReservaIncorrectaError(f"No se pudo confirmar la reserva {self.id}") from e
         else:
             self.estado = "CONFIRMADA"
-            self.marcar_actualizado()
-            logger.info(f"Reserva {self.id} confirmada. Estado: {self.estado}")
-            return True
-        finally:
-            print(f"-> Reserva {self.id} finalizada. Estado: {self.estado}")
-
-    def cancelar(self):
-        if self.estado == "CANCELADA":
-            raise ReservaIncorrectaError("La reserva ya estaba cancelada")
-        self.estado
+            self.marcar_actualizado
