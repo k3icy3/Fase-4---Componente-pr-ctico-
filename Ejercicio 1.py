@@ -30,9 +30,9 @@ class ErrorBaseSistema(Exception):
 class EntidadNoEncontradaError(ErrorBaseSistema):
     #sirve para construir el nombre para la entidad y el identificador
     def __init__(self, entidad: str, id_entidad: str | int):
-    #sirve para hallar el error de identidad no encontrado
+        #sirve para hallar el error de identidad no encontrado
         mensaje = f"No se hallo la entidad '{entidad}' con el ID: {id_entidad}."
-    #sirve para iniciar la clase 404
+        #sirve para iniciar la clase 404
         super().__init__(mensaje, codigo_error=404)
 
 #creación de la excepción para los datos de entrada
@@ -84,19 +84,19 @@ def obtener_logger(nombre_modulo: str) -> logging.Logger:
         #sirve para crear el manejador de logs
         archivo_handler = RotatingFileHandler(
             "logs/sistema.log",
-            maxBytes=5_000_000,
-            backupCount=3,
+            maxBytes=8_000_000,
+            backupCount=6,
             encoding="utf-8",
         )
-#sirve para guardar los archivos debug
+        #sirve para guardar los archivos debug
         archivo_handler.setLevel(logging.DEBUG)
-#sirve para manejar el formato archivo
+        #sirve para manejar el formato archivo
         archivo_handler.setFormatter(formato)
-#sirve para manejar por consola el logger
+        #sirve para manejar por consola el logger
         logger.addHandler(consola_handler)
-#sirve para manejar el archivo logger
+        #sirve para manejar el archivo logger
         logger.addHandler(archivo_handler)
-#sirve para retornar el logger
+    #sirve para retornar el logger
     return logger
 #sirve para iniciar el logger para todo el software FJ
 logger = obtener_logger("SoftwareFJ")
@@ -137,7 +137,7 @@ def es_validar(self)->bool:
 #creacion de la clase hija cliente
 class cliente(entidades):
 #sirve para constructor del cliente con validación
-    def__init__(self, id_cliente::str,:nombre: str, apellido:str,telefono: str, gmail: str, direccion: str = ""):
+    def__init__(self, id_cliente: str, nombre: str, apellido: str, telefono: str, gmail: str, direccion: str = ""):
     #sirve para llamar al constructor de entidades
     super().__init__(id_cliente)
     #sirve para asignar y validar el nombre,apellido,telefono,direccion,gmail
@@ -178,7 +178,7 @@ def apellido(self)->str:
 #validación del apellido mediante la cancelación con setter
 @apellido.setter
 def apellido(self, valor: str)-> None:
-    #sirve para validar el apellido que contenga cinco caracteres
+    #sirve para validar el apellido que contenga seis caracteres
     if not isintance(valor,str) or len(valor.strip()) <5:
         #sirve para definir el mensaje de error dentro del log
         mensaje = "el apellido debe tener 5 caracteres.")
@@ -203,8 +203,8 @@ def telefono(self, valor: str)-> None:
     #sirve para validar que el teléfono tenga seis dígitos
     if not isintance(valor,str) or not valor.strip().isdigit()ornot
     #sirve para definir el mensaje error 
-    mensaje = "el teléfono debe 6 dígitos."
-        raise ValidacionEntidadEror("el telefon debe tener 6 caracteres.")
+    mensaje = "el teléfono debe 7 dígitos."
+        raise ValidacionEntidadEror("el telefono debe tener 7 digitoss.")
         #sirve para guardar el error dentro del log
         logger.error(mensaje)
         #sirve para guardar el teléfono
@@ -303,6 +303,7 @@ class servicio(entidades, ABC):
             mensaje = f"La tarifa debe ser mayor a 0. Valor recibido: {valor}"
             #sirve para registrar el error
             logger.error(mensaje)
+            #sirve para generar la excepción de validación
             raise ValidacionEntidadError(mensaje)
         #sirve para guardar el precio
         self._precio = float(valor)
@@ -393,9 +394,9 @@ class ReservaSala(Servicio):
     #sirve para validar la duración en los auditorios mediante el poliformismo
     def validar_parametros(self, duracion_horas: int) -> None:
         #sirve para comprobar la duración entre las horas
-        if duracion_horas > 7:
+        if duracion_horas > 10:
             #sirve parael precio en las horas de los auditorios
-            raise ValidacionEntidadError("Los auditorios no pueden reservarse por 7 horas seguidas.")
+            raise ValidacionEntidadError("Los auditorios deben reservarse entre 1 y 10 horas seguidas.")
             
     #sirve para calcular el costo por hora mediante el poliformismo
     def calcular_costo_total(self, duracion_horas: int = 1) -> float:
@@ -432,17 +433,17 @@ def __init__( self, id_servicio: int | str, nombre: str, precio: float cantidad_
 
     #sirve para validar mínimo dos horas para alquilar equipos mediante el poliformismo
     def validar_parametros(self, duracion_horas: int) -> None:
-        #sirve para verificar el alquiler en menos de dos horas
-         if duracion_horas < 2:
-             #sirve para agregar error si es menor a 2 horas
-            raise ValidacionEntidadError("El alquiler de equipos requiere un mínimo de 2 horas.")
+        #sirve para verificar el alquiler en menos de tres horas
+         if duracion_horas < 3:
+             #sirve para agregar error si es menor a  tres horas
+            raise ValidacionEntidadError("El alquiler de equipos requiere un mínimo de 3 horas.")
              
     #sirve para calcular el costo por hora más seguro de prestación de equipo
     def calcular_costo_total(self, duracion_horas: int = 1) -> float:
         #sirve para validar los parámetros de duración
-        self.validar_parsmetros(duracion_horas)
+        self.validar_parametros(duracion_horas)
         #sirve para definir el costo fijo
-        seguro_equipo = 20000.0
+        seguro_equipo = 15000.0
         #sirve para retornar el costo total del equipo
         return round((self.precio * duracion_horas * self.cantidad_equipos) + seguro_equipo, 2)
         
@@ -481,10 +482,10 @@ class AsesoriaEspecializada(Servicio):
             #sirve para generar una excepción de validación 
             raise ValidacionEntidadError("La duración de la asesoría debe ser mayor a 0 horas.")
             
-    #sirve para calcular el costo total de la especialidad con 1.5x
+    #sirve para calcular el costo total de la especialidad con 1.8x
     def calcular_costo_total(self, duracion_horas: int = 1) -> float:
         #sirve para retornar el multiplicado
-        return round(self.precio * duracion_horas, 2)
+        return round(self.precio * duracion_horas, * 1.8, 2)
     #sirve para escribir el servicio asesoría especializada
         
     def obtener_informacion(self) -> str:
@@ -634,13 +635,13 @@ if __name__ == "__main__":
 
 # OJO: nombre 6 letras, apellido 5, telefono 6, gmailcon @ - si no, falla a proposito
 #ejecución de la operación registro de cliente válido
-ejecutar(1, "Cliente Valido", lambda: sistema.agregar_cliente(cliente("101","Laura","Perezs","300123","laura@mail.com", "Calle 10")))
+ejecutar(1, "Cliente Valido", lambda: sistema.agregar_cliente(cliente("101","Laura","Perezs","3001234","laura@mail.com", "Calle 10")))
 #ejecución de la operación para el registro de cliente de datos inválido
 ejecutar(2, "Cliente inválido correo", lambda: sistema.agregar_cliente(cliente("102", "Al", "Ruiz", "300", "correo-malo")))
 #ejecución de la operación de registro de de cliente válido
-ejecutar(3, "Cliente válido 2", lambda: sistema.agregar_cliente(cliente("103", "Carlos", "Ruizzz", "310987", "carlos@mail.com")))
+ejecutar(3, "Cliente válido 2", lambda: sistema.agregar_cliente(cliente("103", "Carlos", "Ruizzz", "3109876", "carlos@mail.com")))
 #ejecución de la operación para el registro del cliente duplicado
-ejecutar(4, "Cliente duplicado", lambda: sistema.agregar_cliente(cliente("101", "Lauras", "Perezs", "300123", "laura@mail.com")))
+ejecutar(4, "Cliente duplicado", lambda: sistema.agregar_cliente(cliente("101", "Lauras", "Perezs", "3001234", "laura@mail.com")))
 #ejecución de la operación para la creación válida de un servicio reserva sala
 ejecutar(5, "Sala OK 2 auditorios", lambda: sistema.servicios.append(ReservaSala(1, "Sala Juntas", 50000, 2)))
 #ejecución de la operación para la creación válida de un servicio de alquiler equipo
