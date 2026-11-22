@@ -104,14 +104,14 @@ logger = obtener_logger("SoftwareFJ")
 #Creacion de la clase abstracta 
 class entidades(ABC):
 #sirve para la creación del id
-    def__init__(self, id_entidades: str | None = None):
-#sirve para enviar el id en texto o este mismo genera uuid
-    self.id = str(id_entidades) if id_entidades else str (uuid.uuid4())
-#sirve para guardar la fecha
+    def __init__(self, id_entidades: str | None = None):
+    #sirve para enviar el id en texto o este mismo genera uuid
+    self.id = str(id_entidades) if id_entidades else str(uuid.uuid4())
+    #sirve para guardar la fecha
     self.fecha_creacion = datetime.now()
-#sirve para iniciar la fecha con None
+    #sirve para iniciar la fecha con None
     self.fecha_actualizacion = None
-#sirve para que la entidad esté activa
+    #sirve para que la entidad esté activa
     self.activo = True
     
 #sirve para la propiedad de lectura para consultar el ID encapsulado
@@ -127,17 +127,17 @@ def marcar_actualizado(self) -> None:
     
 #método abstracto para escribir la identidad
 @abstractmethod
-def obtener_informacion(self)-> str:
+def obtener_informacion(self) -> str:
     pass
 #método abstracto para validar la integridad
 @abstractmethod
-def es_validar(self)->bool:
+def es_validar(self) -> bool:
     pass
 
 #creacion de la clase hija cliente
 class cliente(entidades):
 #sirve para constructor del cliente con validación
-    def__init__(self, id_cliente: str, nombre: str, apellido: str, telefono: str, gmail: str, direccion: str = ""):
+    def __init__(self, id_cliente: str, nombre: str, apellido: str, telefono: str, gmail: str, direccion: str = ""):
     #sirve para llamar al constructor de entidades
     super().__init__(id_cliente)
     #sirve para asignar y validar el nombre,apellido,telefono,direccion,gmail
@@ -151,7 +151,7 @@ logger.info(f"Cliente registrado: {self.nombre} {self.apellido} (ID: {self.id})"
 
 #Validacion del nombre mediante encapsulación con getter
 @property
-def nombre(self)->str:
+def nombre(self) -> str:
     #sirve para retornar el nombre
     return self._nombre
     
@@ -159,11 +159,11 @@ def nombre(self)->str:
 @nombre.setter
 def nombre(self,valor:str)-> None:
     #sirve para validar el nombre que contenga sus 6 caracteres
-    if not isintance(valor,str) or len(valor.strip())<6:
+    if not isintance(valor, str) or len(valor.strip())<6:
+        #sirve para guardar el error dentro del log
+        logger.error(mensaje
         #sirve para guardar el mensaje de error
         raise ValidacionEntidadError("el nombre debe tener 6 caracteres.")
-        #sirve para guardar el error dentro del log
-        logger.error(mensaje)
         #sirve para guardar el nombre
         self._nombre = valor.strip()
         #sirve para actualizar la fecha
@@ -171,13 +171,13 @@ def nombre(self,valor:str)-> None:
         
 #Validacion del apellido mediante la encapsulación con getter
 @property
-def apellido(self)->str:
+def apellido(self) -> str:
     #sirve para retornar el apellido
     return self._apellido
     
 #validación del apellido mediante la cancelación con setter
 @apellido.setter
-def apellido(self, valor: str)-> None:
+def apellido(self, valor: str) -> None:
     #sirve para validar el apellido que contenga seis caracteres
     if not isintance(valor,str) or len(valor.strip()) <5:
         #sirve para definir el mensaje de error dentro del log
@@ -187,13 +187,13 @@ def apellido(self, valor: str)-> None:
         #sirve para guardar alguna excepción de validación
         raise ValidacioEntidadError(mensaje)
         #sirve para guardar el apellido
-        self._apellido=valor.strip()
+        self._apellido = valor.strip()
         #sirve para actualizar la fecha
         self.marcar_actualizado()
         
 #Validacion del telefono mediante la encapsulación getter
     @property
-def telefono(self)->str:
+def telefono(self) -> str:
     #sirve para retornar el teléfono
     return self._telefono
     
@@ -201,7 +201,7 @@ def telefono(self)->str:
     @telefono.setter
 def telefono(self, valor: str)-> None:
     #sirve para validar que el teléfono tenga seis dígitos
-    if not isintance(valor,str) or not valor.strip().isdigit()ornot
+    if not isintance(valor,str) or not valor.strip().isdigit() or len(valor.strip()) <7:
     #sirve para definir el mensaje error 
     mensaje = "el teléfono debe 7 dígitos."
         raise ValidacionEntidadEror("el telefono debe tener 7 digitoss.")
@@ -220,11 +220,11 @@ def telefono(self, valor: str)-> None:
         
 #validación del gmail mediante la encapsulación setter
     @gmail.setter
-    def gmail(self, valor: str):
+    def gmail(self, valor: str): -> None
         #sirve para definir la expresión del correo
         patron = r"^[\w\.-]+@[\w\.-]+\.\w+$"
         #sirve para validar el formato del correo
-        if not isinstance(valor, str) or not re.match(patron, valor):
+        if not isinstance(valor, str) or not re.match(patron, valor.strip()):
             #sirve para definir el mensaje error 
             mensaje = "el correo electrónico es inválido."
             #sirve para guardar el mensaje de error 
@@ -248,7 +248,7 @@ def telefono(self, valor: str)-> None:
     def es_validar(self) -> bool:
         #sirve para comprobar los campos
         return all([
-            boll.(self.id_entiades),
+            boll.(self.id),
             boll.(self.nombre),
             boll.(self.apellido),
             boll.(self.telefono),
@@ -258,9 +258,9 @@ def telefono(self, valor: str)-> None:
 #Creacion de la clase abstracta servicio
 class servicio(entidades, ABC):
 #sirve para construir servicio 
-    def __init__(self, id_servicio: int, nombre: str, precio: float, disponibilidad: bool = True) -> None:
+    def __init__(self, id_servicio: int | str, nombre: str, precio: float, disponibilidad: bool = True) -> None:
         #sirve para llamar al constructor padre
-        self.id_servicio = id_servicio
+        super().__init__(id_servicio)
         #sirve para asignar los atributos
         self.nombre = nombre
         self.precio = precio
@@ -360,6 +360,7 @@ if subtotal < 0 or impuesto_pct < 0 or descuento_pct < 0:
         impuesto = base_imponible * (impuesto_pct / 100)
         #sirve para retornar el redondeo a dos decimales
         return round(base_imponible + impuesto, 2)
+
     #metodo abstracto para calcular el costo
     @abstractmethod
     def calcular_costo_total(self, duracion_horas: int = 1) -> float:
@@ -369,7 +370,7 @@ if subtotal < 0 or impuesto_pct < 0 or descuento_pct < 0:
     def validar_parametros(self, duracion_horas: int) -> None:
         pass
     #Inclusion del metodo abstracto es_validar
-    def es_valido(self) -> bool:
+    def es_validar(self) -> bool:
         return bool(self._nombre) and self._precio > 0
 
         
