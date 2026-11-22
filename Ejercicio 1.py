@@ -135,16 +135,9 @@ def obtener_informacion(self)-> str:
 def es_validar(self)->bool:
     pass
 
-
-class entidades(ABC):
-    def__init__(self, id_entidades: str):
-    self._id = id_entidades
-
-@abstractmethod 
-def obtener_informacion(self): -> str:
-    pass
-
+#creacion de la clase hija cliente
 class cliente(entidades):
+#sirve para constructor del cliente con validación
     def__init__(self, id_cliente:str,nombre:str,apellido:str,telefono:str,gmail:str | None = None,):
     super().__init__(id_cliente)
 self.nombre = nombre
@@ -152,70 +145,79 @@ self.apellido = apellido
 self.telefono = telefono
 self.direccion = direccion
 self.gmail = gmail
+#sirve para registrar el evento con log
 logger.info(f"Cliente registrado: {self.nombre} {self.apellido} (ID: {self.id})")
 
-#Validacion del nombre mediante encapsulación 
+#Validacion del nombre mediante encapsulación con getter
 @property
 def nombre(self)->str:
     return self._nombre
-    
+#validación del nombre mediante encapsulación con setter
 @nombre.setter
 def nombre(self,valor:str)-> None:
     if not isintance(valor,str) or len(valor.strip())<6:
         raise ValidacionEntidadError("el nombre debe tener 6 caracteres.")
         logger.error(mensaje)
+#sirve para guardar el nombre
         self._nombre = valor.strip()
+#sirve para actualizar la fecha
         self._marcar_actualizado()
         
-#Validacion del apellido mediante la encapsulación 
+#Validacion del apellido mediante la encapsulación con getter
 @property
 def apellido(self)->str:
     return self._apellido
-
+#validación del apellido mediante la cancelación con setter
 @apellido.setter
 def apellido(self,valor:str)-> None:
     if not isintance(valor,str) or len(valor.strip()) <5:
         raise ValidacionEntidadError("el apellido debe tener 5 caracteres.")
         logger.error(mensaje)
+#sirve para guardar el apellido
         self._apellido=valor.strip()
+#sirve para actualizar la fecha
         self.marcar_actualizado()
         
-#Validacion del telefono mediante la encapsulación 
+#Validacion del telefono mediante la encapsulación getter
     @property
 def telefono(self)->str:
     return self._telefono
-    
+#validación del teléfono mediante la encapsulación setter
     @telefono.setter
 def telefono(self,valor:str)-> None:
     if not isintance(valor,str) or not valor.strip().isdigit()ornot
         raise ValidacionEntidadEror("el telefon debe tener 6 caracteres.")
         logger.error(mensaje)
+#sirve para guardar el teléfono
         self._telefono = valor.strip()
+#sirve para actualizar la fecha
         self.marcar_actualizado()
 
-#Validacion del gmail mediante la encapsulación 
+#Validacion del gmail mediante la encapsulación getter
     @property
     def gmail(self) -> str:
         return self.__gmail
-
+#validación del gmail mediante la encapsulación setter
     @gmail.setter
     def gmail(self, valor: str):
         patron = r"^[\w\.-]+@[\w\.-]+\.\w+$"
         if not isinstance(valor, str) or not re.match(patron, valor):
             raise VallidacionEntidadEror("El correo electrónico es inválido.")
             logger.error(mensaje)
+#sirve para guardar el gmail
         self.__gmail = valor.strip().lower()
+#sirve para actualizar la fecha
         self.marcar_actualizado()
         
-#Ejecucion de los metodos heredados
+#Ejecucion de los metodos heredados con obtener_informacion
    def obtener_informacion(self) -> str:
         return (
             f"Cliente [{self.id}]: {self.nombre} {self.apellido} | "
             f"Correo: {self.email} | Teléfono: {self.telefono}"
                )
     
-#Ejecucion del método abstracto
-    def obtener_informacion(self) -> str:
+#Ejecucion del método abstracto de es_validar
+    def es_validar(self) -> str:
         return f"Cliente: {self.__nombre} {self._apellido} | Correo: {self.__gmail} | Telefono: {self._telefono}"
         return all([
             boll.(self.id_entiades),
