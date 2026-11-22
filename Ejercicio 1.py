@@ -313,7 +313,7 @@ if subtotal < 0 or impuesto_pct < 0 or descuento_pct < 0:
         return bool(self._nombre) and self._precio > 0
 
         
-#Creacion de la clase hija de servicio
+#Creacion de la clase hija reservae sala de servicio
 class ReservaSala(Servicio):
 #sirve para construir la cantidad de auditorios
       def __init__(self,id_servicio: int | str, nombre: str,  precio: float, cantidad_auditorios: int = 1, disponibilidad: bool = True,) -> None:
@@ -340,26 +340,29 @@ class ReservaSala(Servicio):
             f"Tarifa/h: ${self.precio:,.2f} | Auditorios: {self.cantidad_auditorios} | "
             f"Disponible: {self.disponibilidad}"
 )
-
+#creación de la clase hija alquiler de equipo de servicio
 class AlquilerEquipo(Servicio):
+#sirve para construir la cantidad de equipos
 def __init__( self, id_servicio: int | str, nombre: str, precio: float cantidad_equipos: int = 1disponibilidad: bool = True, ) -> None:
+#sirve para llamar al constructor de servicio
         super().__init__(id_servicio, nombre, precio, disponibilidad)
+#sirve para validar la cantidad de equipos
         if not isinstance(cantidad_equipos, int) or cantidad_equipos <= 0:
             mensaje = "La cantidad de equipos a alquilar debe ser un entero mayor a 0."
             logger.error(mensaje)
             raise ValidacionEntidadError(mensaje)
         self.cantidad_equipos = cantidad_equipos
         logger.info(f"Servicio AlquilerEquipo '{self.nombre}' ha sido ejecutado correctamente.")
-
+#sirve para validar mínimo dos horas para alquilar equipos mediante el poliformismo
     def validar_parametros(self, duracion_horas: int) -> None:
          if duracion_horas < 2:
             raise ValidacionEntidadError("El alquiler de equipos requiere un mínimo de 2 horas.")
-
+#sirve para calcular el costo por hora más seguro de prestación de equipo
     def calcular_costo_total(self, duracion_horas: int = 1) -> float:
         self.validar_parsmetros(duracion_horas)
-        seguro_equipo = 10000.0
+        seguro_equipo = 20000.0
         return round((self.precio * duracion_horas * self.cantidad_equipos) + seguro_equipo, 2)
-
+#sirve para escribir el servicio de alquiler equipos 
     def obtener_informacion(self) -> str:
         """Metodo de poliformismo."""
         return (
@@ -367,24 +370,27 @@ def __init__( self, id_servicio: int | str, nombre: str, precio: float cantidad_
             f"Tarifa/h: ${self.precio:,.2f} | Equipos: {self.cantidad_equipos} | "
             f"Disponible: {self.disponibilidad}"
                )
-
+#creación de la clase hija asesoría especializada de servicio
 class AsesoriaEspecializada(Servicio):
+#sirve para construir la especialidad tecnica
  def __init__( self,id_servicio: int | str,  nombre: str, precio: float,especialidad: str = "Desarrollo de Software", disponibilidad: bool = True, ) -> None:
+#sirve para llamar al constructor de servicio
         super().__init__(id_servicio, nombre, precio, disponibilidad)
+#sirve para validar el nombre de la especialidad
         if not isinstance(especialidad, str) or len(especialidad.strip()) < 3:
             mensaje = "La especialidad de la asesoría debe tener 3 caracteres."
             logger.error(mensaje)
             raise ValidacionEntidadError(mensaje)
         self.especialidad = especialidad.strip()
         logger.info(f"Servicio AsesoriaEspecializada '{self.nombre}' ha sido ejecutado correctamente.")
-
+#sirve para validar la la duración mayor a cero horas mediante el poliformismo
     def validar_parametros(self, duracion_horas: int) -> None:
         if duracion_horas <= 0:
             raise ValidacionEntidadError("La duración de la asesoría debe ser mayor a 0 horas.")
-
+#sirve para calcular el costo total de la especialidad con 1.5x
     def calcular_costo_total(self, duracion_horas: int = 1) -> float:
         return round(self.precio * duracion_horas, 2)
-
+#sirve para escribir el servicio asesoría especializada
     def obtener_informacion(self) -> str:
         return (
             f"Asesoría Especializada [{self.id}]: {self.nombre} ({self.especialidad}) | "
@@ -477,7 +483,7 @@ ejecutar(2, "Cliente inválido correo", lambda: sistema.agregar_cliente(cliente(
 ejecutar(3, "Cliente válido 2", lambda: sistema.agregar_cliente(cliente("103", "Carlos", "Ruizzz", "310987", "carlos@mail.com")))
 ejecutar(4, "Cliente duplicado", lambda: sistema.agregar_cliente(cliente("101", "Lauras", "Perezs", "300123", "laura@mail.com")))
 ejecutar(5, "Sala OK 2 auditorios", lambda: sistema.servicios.append(ReservaSala(1, "Sala Juntas", 50000, 2)))
-ejecutar(6, "Equipo OK 3 equipos + seguro 10000", lambda: sistema.servicios.append(AlquilerEquipo(2, "Video Beam", 20000, 3)))
+ejecutar(6, "Equipo OK 3 equipos + seguro 20000", lambda: sistema.servicios.append(AlquilerEquipo(2, "Video Beam", 20000, 3)))
 ejecutar(7, "Asesoría Especializada + total 1.5x", lambda: print("Total:", AsesoriaEspecializada(3, "Asesoría FJ", 80000, "Desarrollo de Software").calcular_costo_total(2)))
 ejecutar(8, "Reserva exitosa Sala 3h", lambda: Reserva("R001", sistema.clientes[0], sistema.servicios[0], 3).confirmar())
 ejecutar(9, "Reserva fallida Equipo 1h - minimo 2h", lambda: Reserva("R002", sistema.clientes[0], sistema.servicios[1], 1).confirmar())
