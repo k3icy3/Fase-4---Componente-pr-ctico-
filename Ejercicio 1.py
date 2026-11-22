@@ -313,26 +313,27 @@ if subtotal < 0 or impuesto_pct < 0 or descuento_pct < 0:
         return bool(self._nombre) and self._precio > 0
 
         
-#Creacion de las clases hijas de servicio
+#Creacion de la clase hija de servicio
 class ReservaSala(Servicio):
-#sirve para construir servicio
+#sirve para construir la cantidad de auditorios
       def __init__(self,id_servicio: int | str, nombre: str,  precio: float, cantidad_auditorios: int = 1, disponibilidad: bool = True,) -> None:
-#sirve para llamar el constructor de entidades
+#sirve para llamar el constructor de servicio 
         super().__init__(id_servicio, nombre, precio, disponibilidad)
+#sirve para validar la cantidad de auditorios
         if not isinstance(cantidad_auditorios, int) or cantidad_auditorios <= 0:
             mensaje = "La cantidad de auditorios debe ser un entero mayor a 0."
             logger.error(mensaje)
             raise ValidacionEntidadError(mensaje)
         self.cantidad_auditorios = cantidad_auditorios
         logger.info(f"Servicio ReservaSala '{self.nombre}' creado con {self.cantidad_auditorios} auditorio(s).")
-
+#sirve para validar las horas máximas para los auditorios mediante el poliformismo
     def validar_parametros(self, duracion_horas: int) -> None:
         if duracion_horas > 12:
             raise ValidacionEntidadError("Los auditorios no pueden reservarse por 7 horas seguidas.")
-
+#sirve para calcular el costo por hora mediante el poliformismo
     def calcular_costo_total(self, duracion_horas: int = 1) -> float:
         return round(self.precio * duracion_horas * self.cantidad_auditorios, 4)
-
+#sirve para escribir el servicio reserva sala
     def obtener_informacion(self) -> str:
         return (
             f"Reserva de Sala [{self.id}]: {self.nombre} | "
